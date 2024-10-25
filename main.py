@@ -8,24 +8,6 @@ clock = pygame.time.Clock()
 
 track_img = pygame.image.load(os.path.join("assets","track_assets","track.png"))
 
-#this function will return the positions of the tiles and the background image
-def background(background_name):
-    path = os.path.join("assets","Background_Tiles",background_name)
-    background_img =  pygame.image.load(path).convert_alpha()
-    _,_,width,height = background_img .get_rect()
-    positions = []
-    for i in range(WIDTH//width+1):
-        for j in range(HEIGHT//height+1):
-            positions.append((i*width,j*height))
-    return positions , background_img
-
-def draw_background():
-    #you can change the background by choosing one of these names :
-    #"Grass_Tile.png" or "Soil_Tile.png"
-    positions , background_img = background("Grass_Tile.png")
-    for pos in positions:
-        screen.blit(background_img,pos)
-
 class Car():
     #you can change the background by choosing one of these names :
     #"WhiteStrip.png" , "GreenStrip.png" , "BlueStrip.png" , "PinkStrip.png"
@@ -40,6 +22,7 @@ class Car():
         self.max_speed = 7
         self.angle = 0
         self.rotation_speed = 3
+        self.alive = True
 
     def move(self):
         press = pygame.key.get_pressed()
@@ -64,9 +47,77 @@ class Car():
         radians = math.radians(self.angle)
         self.rect.x += self.car_speed * math.cos(radians)
         self.rect.y -= self.car_speed * math.sin(radians)
-             
+
+    def radar(self):
+        
+        radar_angles_list = [-60,-30,0,30,60]
+        
+        x = int(self.rect.centerx)
+        y = int(self.rect.centery)
+
+        for radar_angle in radar_angles_list:
+            radar_length = 0
+            angle_radians = math.radians(self.angle + radar_angle)
+            while radar_length < 200:
+                # Calculate new position for radar point
+                x = int(self.rect.centerx + radar_length * math.cos(angle_radians))
+                y = int(self.rect.centery - radar_length * math.sin(angle_radians))
+            
+                # Stop radar if it hits black or goes out of bounds
+                if (0 <= x < WIDTH and 0 <= y < HEIGHT):
+                    if screen.get_at((x, y)) == pygame.Color(20, 174, 92 , 255):  # Check for color
+                        break
+                else:
+                    break
+
+                radar_length += 1
+
+            #draw the radar
+            pygame.draw.line(screen,(255,255,255),self.rect.center,(x,y),2)
+            pygame.draw.circle(screen,(255,255,255),(x,y),4)
+    
+    def collision(self):
+                                            #GET HEADLIGHT COLLISION POINTS
+        angle_radians = math.radians(self.angle)
+
+        #Offset Calculation for the Front of the Car
+        #27 is half the the length of the car image
+        front_offset_x = 27 * math.cos(angle_radians)
+        front_offset_y = -27 * math.sin(angle_radians)
+
+        #Placing the Collision Points at the Headlights
+        right_headlight = (int(self.rect.centerx + front_offset_x + math.sin(angle_radians) * 12),
+                           int(self.rect.centery + front_offset_y + math.cos(angle_radians) * 12))
+        
+        left_headlight = (int(self.rect.centerx + front_offset_x - math.sin(angle_radians) * 12),
+                          int(self.rect.centery + front_offset_y - math.cos(angle_radians) * 12))
+        
+        # Draw collision points for visualization
+
+        #if you uncomment the two lines below , the color detection in the CHECK COLLISION section will not work \
+        # because it will detect the headlight colors instead of the background color
+
+        #pygame.draw.circle(screen, (195, 255, 0), right_headlight, 3)  # Right headlight in blue
+        #pygame.draw.circle(screen, (195, 255, 0), left_headlight, 3)   # Left headlight in red
+
+                                            #CHECK COLLISION
+        right_x, right_y = right_headlight
+        left_x, left_y = left_headlight
+    
+        # Ensure the coordinates are within bounds before checking pixel color
+        if 0 <= right_x < WIDTH and 0 <= right_y < HEIGHT and screen.get_at(right_headlight) == pygame.Color(20, 174, 92, 255) : 
+            self.alive = False
+            print("Collision detected at right headlight!")
+            
+        if (0 <= left_x < WIDTH and 0 <= left_y < HEIGHT and 
+            (screen.get_at(left_headlight) == pygame.Color(20, 174, 92, 255))):
+            self.alive = False
+            print("Collision detected at left headlight!")
+        
     def update_car(self):
         self.move()
+        self.radar()
+        self.collision()
         self.draw()
         
     def draw(self):
@@ -85,7 +136,6 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        draw_background()
         screen.blit(track_img,(0,0))
         car.update_car()
         pygame.display.flip()
