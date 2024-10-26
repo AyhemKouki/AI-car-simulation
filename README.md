@@ -8,7 +8,6 @@ Welcome to the AI Car Simulation! This project uses Python and Pygame to simulat
 - [Installation](#installation)
 - [Usage](#usage)
 - [How It Works](#how-it-works)
-- [Contributing](#contributing)
 
 ## Features
 
@@ -23,19 +22,19 @@ Welcome to the AI Car Simulation! This project uses Python and Pygame to simulat
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/AI-Car-Simulation.git
-Navigate to the project directory:
-   
-   cd AI-Car-Simulation
+2. Navigate to the project directory:
+   ```bash
+      cd AI-Car-Simulation
 
-Install the required dependencies:
-   
-   pip install pygame neat-python
+3. Install the required dependencies:
+   ```bash
+      pip install pygame neat-python
    
 
 ## Usage
-Run the simulation:
-
-python main.py
+1. Run the simulation:
+   ```bash
+   python main.py
 
 Observe the AI cars navigating the track and adapting their strategies.
 
