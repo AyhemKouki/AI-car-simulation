@@ -21,7 +21,7 @@ Welcome to the AI Car Simulation! This project uses Python and Pygame to simulat
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/AI-Car-Simulation.git
+   git clone https://github.com/AyhemKouki/AI-Car-Simulation.git
 2. Navigate to the project directory:
    ```bash
       cd AI-Car-Simulation
