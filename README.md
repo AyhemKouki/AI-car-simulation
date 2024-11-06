@@ -1,5 +1,9 @@
 # AI Car Simulation
 
+
+https://github.com/user-attachments/assets/d4802293-89db-475a-a261-955519ef05cd
+
+
 Welcome to the AI Car Simulation! This project uses Python and Pygame to simulate car movement using a NEAT (NeuroEvolution of Augmenting Topologies) neural network. The goal is to have AI-controlled cars navigate a track while avoiding collisions.
 
 ## Table of Contents
